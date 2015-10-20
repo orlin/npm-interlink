@@ -1,0 +1,20 @@
+{
+  "name": "npm-interlink",
+  "description": "because `npm link ...` can be tedious",
+  "keywords": [
+    "npm",
+    "link",
+    "tool"
+  ],
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/orlin/npm-interlink.git"
+  },
+  "author": "Orlin M Bozhinov <om@soundsapiens.com>",
+  "contributors": [],
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {},
+  "license": "MIT"
+}
