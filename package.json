@@ -13,6 +13,9 @@
   },
   "author": "Orlin M Bozhinov <om@soundsapiens.com>",
   "contributors": [],
+  "bin": {
+    "npm-interlink": "cli.js"
+  },
   "dependencies": {
     "babel": "^5.8.23",
     "childish-process": "0.0.4"
