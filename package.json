@@ -16,6 +16,7 @@
   "bin": {
     "npm-interlink": "cli.js"
   },
+  "preferGlobal": true,
   "dependencies": {
     "babel": "^5.8.23",
     "is-there": "^4.1.0",
