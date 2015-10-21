@@ -18,7 +18,8 @@
   },
   "dependencies": {
     "babel": "^5.8.23",
-    "childish-process": "0.0.4"
+    "childish-process": "0.0.4",
+    "is-there": "^4.1.0"
   },
   "devDependencies": {
     "babel-eslint": "^4.1.3",
