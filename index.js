@@ -23,9 +23,10 @@ function keys (something) {
   return R.keys(something) || []
 }
 
-function gotErr (spawned) {
+function hasErr (spawned) {
   if (spawned.status !== 0 || spawned.error || spawned.stderr.toString()) {
-    console.error(R.pick(['status', 'error', 'stderr'], spawned))
+    console.error(R.pick(['status', 'error'], spawned))
+    if (spawned.stderr) console.error(spawned.stderr.toString())
     return true
   } else {
     return false
@@ -41,7 +42,7 @@ for (let dir of dirList) {
       modules[pkg.name].links = R.union(keys(pkg.dependencies), keys(pkg.devDependencies))
       console.log(`\$ cd ${dir} && npm link #${pkg.name}`)
       let res = spawnSync('npm', ['link'], {cwd: dir})
-      if (!gotErr(res)) {
+      if (!hasErr(res)) {
         console.log(`Linked ${pkg.name}.`)
       }
     } catch (e) {
@@ -55,9 +56,19 @@ for (let dir of dirList) {
 for (let name in modules) {
   let names = R.keys(modules)
   modules[name].links = R.intersection(modules[name].links, names)
+  console.log(`Linking ${name} modules: [${modules[name].links}]...`)
+  for (let pkg of modules[name].links) {
+    console.log(`\$ cd ${modules[name].dir} && npm link ${pkg}`)
+    let res = spawnSync('npm', ['link', pkg], {cwd: modules[name].dir})
+    if (hasErr(res)) {
+      console.error(`Module ${name} failed to link ${pkg}.`)
+    }
+  }
 }
 
+/*
 console.log('If no errors above, the following should be interlinked:')
 for (let name in modules) {
   console.log(`${name}: [${modules[name].links}]`)
 }
+*/
