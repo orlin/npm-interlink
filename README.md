@@ -31,6 +31,22 @@ Clone is really a metaphor here, as `npm-interlink` is agnostic to version contr
 Create a `.npm-interlink` file containing the list of dirs / modules to interlink.
 Use relative or absolute paths - one per line.
 
+For example, here is how I interlink the [gulpsome beverage](https://github.com/gulpsome) modules, plus a couple of other projects of mine that they depend on:
+
+```text
+be-goods
+beverage
+../childish-process
+gulp-cause
+gulp-harp
+gulp-npm-run
+gulp-npm-test
+hal-rc
+../sourcegate
+```
+
+How you setup the directory structure is entirely up to you, though this obviously works well for organizations.  One can also start with a subset and add more projects as the need to work on them arises.
+
 ## Develop
 
 [![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
