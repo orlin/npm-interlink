@@ -27,6 +27,10 @@ Clone is really a metaphor here, as `npm-interlink` is agnostic to version contr
 Create a `.npm-interlink` file containing the list of dirs / modules to interlink.
 Use relative or absolute paths - one per line.
 
+## Develop
+
+[![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
+
 ## License
 
 [MIT](http://orlin.mit-license.org)
