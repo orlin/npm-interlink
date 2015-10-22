@@ -10,7 +10,11 @@ Any dir with `package.json` will be `npm link`ed - making its module global.
 Any dir with `package.json` dependencies referencing a linked module will get them linked to its `node_modules`.
 Already linked modules that are not explicitly part of an *interlink* set will not be linked to.
 
-## Configure
+## Use
+
+[![NPM](https://nodei.co/npm/npm-interlink.png?mini=true)](https://www.npmjs.org/package/npm-interlink)
+
+### Configure
 
 Create a `.npm-interlink` file containing the list of dirs / modules to interlink.
 Use relative or absolute paths - one per line.
