@@ -45,9 +45,9 @@ hal-rc
 ../sourcegate
 ```
 
-How you setup the directory structure is entirely up to you, though this obviously works well for organizations.  One can also start with a subset and add more projects as the need to work on them arises.
+How you setup the directory structure is entirely up to you, though this obviously works well for organizations (collections of repos).  One can start with a subset and add more projects as the need to work on them arises.
 
-## Develop [![Dependencies](https://img.shields.io/david/orlin/npm-interlink/dev-status.svg?style=flat-square)](https://david-dm.org/orlin/npm-interlink#info=devDependencies)
+## Develop [![Dependencies](https://img.shields.io/david/dev/orlin/npm-interlink.svg?style=flat-square&label=devDependencies)](https://david-dm.org/orlin/npm-interlink#info=devDependencies)
 
 [![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
 
