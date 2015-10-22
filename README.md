@@ -1,7 +1,7 @@
 # npm-interlink
 
 [![Version npm](https://img.shields.io/npm/v/npm-interlink.svg?style=flat-square)](https://www.npmjs.com/package/npm-interlink)
-[![Dependencies](https://img.shields.io/david/indexzero/nconf.svg?style=flat-square)](https://david-dm.org/orlin/npm-interlink)
+[![Dependencies](https://img.shields.io/david/orlin/npm-interlink.svg?style=flat-square)](https://david-dm.org/orlin/npm-interlink)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](http://standardjs.com)
 
 Sets up several node projects for local development using `npm link`.
@@ -21,7 +21,7 @@ Already linked modules that are not explicitly part of an *interlink* set will n
 
 ## Use
 
-$ `npm i -g npm-interlink`
+[![NPM](https://nodei.co/npm/npm-interlink.png?mini=true)](https://www.npmjs.org/package/npm-interlink)
 
 Clone some node.js projects and run `npm-interlink` in their parent directory.
 Clone is really a metaphor here, as `npm-interlink` is agnostic to version control.
@@ -47,7 +47,7 @@ hal-rc
 
 How you setup the directory structure is entirely up to you, though this obviously works well for organizations.  One can also start with a subset and add more projects as the need to work on them arises.
 
-## Develop
+## Develop [![Dependencies](https://img.shields.io/david/orlin/npm-interlink/dev-status.svg?style=flat-square)](https://david-dm.org/orlin/npm-interlink#info=devDependencies)
 
 [![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
 
