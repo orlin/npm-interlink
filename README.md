@@ -1,5 +1,9 @@
 # npm-interlink
 
+[![Version npm](https://img.shields.io/npm/v/npm-interlink.svg?style=flat-square)](https://www.npmjs.com/package/npm-interlink)
+[![Dependencies](https://img.shields.io/david/indexzero/nconf.svg?style=flat-square)](https://david-dm.org/orlin/npm-interlink)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](http://standardjs.com)
+
 Sets up several node projects for local development using `npm link`.
 Especially useful in the context of `nvm` and / or having many projects that depend on each other.
 
@@ -17,7 +21,7 @@ Already linked modules that are not explicitly part of an *interlink* set will n
 
 ## Use
 
-[![NPM](https://nodei.co/npm/npm-interlink.png?mini=true)](https://www.npmjs.org/package/npm-interlink)
+$ `npm i -g npm-interlink`
 
 Clone some node.js projects and run `npm-interlink` in their parent directory.
 Clone is really a metaphor here, as `npm-interlink` is agnostic to version control.
