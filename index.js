@@ -30,14 +30,19 @@ function keys (something) {
 }
 
 function hasErr (spawned) {
-  if (spawned.status !== 0 || spawned.error || spawned.stderr.toString()) {
-    console.error(red(R.pick(['status', 'error'], spawned)))
-    if (spawned.stderr) console.error(red(spawned.stderr.toString()))
+  if (spawned.stderr.toString()) {
+    console.error(red(spawned.stderr.toString())) // doesn't necessarily mean error
+  }
+  if (spawned.status !== 0 || spawned.error) {
+    console.error(`The exit status code is a bad ${red(spawned.status)}.`)
+    if (spawned.error) {
+      console.error(red('Got the following error:'))
+      console.error(spawned.error)
+    }
     gotErrs.push(command)
     return true
-  } else {
-    return false
   }
+  return false
 }
 
 for (let dir of dirList) {
@@ -86,7 +91,7 @@ for (let name in modules) {
 */
 
 if (gotErrs.length > 0) {
-  console.error(bad(`Got ${gotErrs.length} error${gotErrs.length > 1 ? 's' : ''}:`))
+  console.error(bad(`In summary, got ${gotErrs.length} error${gotErrs.length > 1 ? 's' : ''}:`))
   for (let err of gotErrs) {
     console.error(red(err))
   }
