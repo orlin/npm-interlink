@@ -53,6 +53,7 @@ for (let dir of dirList) {
       modules[pkg.name].dir = dir
       modules[pkg.name].links = R.union(keys(pkg.dependencies), keys(pkg.devDependencies))
       command = `\$ cd ${dir} && npm link #${pkg.name}`
+      console.log('')
       console.log(command)
       let res = spawnSync('npm', ['link'], {cwd: dir})
       if (!hasErr(res)) {
@@ -72,6 +73,7 @@ for (let dir of dirList) {
 for (let name in modules) {
   let names = R.keys(modules)
   modules[name].links = R.intersection(modules[name].links, names)
+  console.log('')
   console.log(`Linking ${name} modules: [${modules[name].links}]...`)
   for (let pkg of modules[name].links) {
     command = `\$ cd ${modules[name].dir} && npm link ${pkg}`
@@ -83,17 +85,14 @@ for (let name in modules) {
   }
 }
 
-/*
-console.log('If no errors above, the following should be interlinked:')
-for (let name in modules) {
-  console.log(`${name}: [${modules[name].links}]`)
-}
-*/
-
 if (gotErrs.length > 0) {
+  console.error('')
   console.error(bad(`In summary, got ${gotErrs.length} error${gotErrs.length > 1 ? 's' : ''}:`))
   for (let err of gotErrs) {
     console.error(red(err))
   }
   process.exit(1)
+} else {
+  console.log('')
+  console.log('All done, have no errors to report.')
 }
