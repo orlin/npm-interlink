@@ -50,9 +50,11 @@ for (let dir of dirList) {
       let res = spawnSync('npm', ['link'], {cwd: dir})
       if (!hasErr(res)) {
         console.log(`Linked ${pkg.name}.`)
+      } else {
+        console.log(bad(`Module ${pkg.name} failed to link itself.`))
       }
     } catch (e) {
-      console.error(e)
+      console.error(red(e))
       gotErrs++
     }
   } else {
@@ -68,7 +70,7 @@ for (let name in modules) {
     console.log(`\$ cd ${modules[name].dir} && npm link ${pkg}`)
     let res = spawnSync('npm', ['link', pkg], {cwd: modules[name].dir})
     if (hasErr(res)) {
-      console.error(`Module ${name} failed to link ${pkg}.`)
+      console.log(bad(`Module ${name} failed to link ${pkg}.`))
     }
   }
 }
