@@ -3,6 +3,11 @@
 Sets up several node projects for local development using `npm link`.
 Especially useful in the context of `nvm` and / or having many projects that depend on each other.
 
+## Why
+
+1. quickly setup a bunch of modules for local development or experimentation
+2. relink the same modules in another context, e.g. because `nvm` links modules per node version
+
 ## How
 
 All it needs are project paths, or it tries the immediate subdirectories of the current dir.
@@ -13,6 +18,9 @@ Already linked modules that are not explicitly part of an *interlink* set will n
 ## Use
 
 [![NPM](https://nodei.co/npm/npm-interlink.png?mini=true)](https://www.npmjs.org/package/npm-interlink)
+
+Clone some node.js projects and run `npm-interlink` in their parent directory.
+Clone is really a metaphor here, as `npm-interlink` is agnostic to version control.
 
 ### Configure
 
