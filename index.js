@@ -11,7 +11,8 @@ const bad = chalk.red.bold
 
 let dirList = []
 let modules = {}
-let gotErrs = 0
+let command = '' // context, everything is run synchronously, one command at a time
+let gotErrs = []
 
 if (isThere('.npm-interlink')) {
   console.log('Configuration .npm-interlink found.')
@@ -32,7 +33,7 @@ function hasErr (spawned) {
   if (spawned.status !== 0 || spawned.error || spawned.stderr.toString()) {
     console.error(red(R.pick(['status', 'error'], spawned)))
     if (spawned.stderr) console.error(red(spawned.stderr.toString()))
-    gotErrs++
+    gotErrs.push(command)
     return true
   } else {
     return false
@@ -46,7 +47,8 @@ for (let dir of dirList) {
       modules[pkg.name] = {}
       modules[pkg.name].dir = dir
       modules[pkg.name].links = R.union(keys(pkg.dependencies), keys(pkg.devDependencies))
-      console.log(`\$ cd ${dir} && npm link #${pkg.name}`)
+      command = `\$ cd ${dir} && npm link #${pkg.name}`
+      console.log(command)
       let res = spawnSync('npm', ['link'], {cwd: dir})
       if (!hasErr(res)) {
         console.log(`Linked ${pkg.name}.`)
@@ -55,7 +57,7 @@ for (let dir of dirList) {
       }
     } catch (e) {
       console.error(red(e))
-      gotErrs++
+      gotErrs.push(command)
     }
   } else {
     console.log(`Skipping ${dir} - package.json not found.`)
@@ -67,7 +69,8 @@ for (let name in modules) {
   modules[name].links = R.intersection(modules[name].links, names)
   console.log(`Linking ${name} modules: [${modules[name].links}]...`)
   for (let pkg of modules[name].links) {
-    console.log(`\$ cd ${modules[name].dir} && npm link ${pkg}`)
+    command = `\$ cd ${modules[name].dir} && npm link ${pkg}`
+    console.log(command)
     let res = spawnSync('npm', ['link', pkg], {cwd: modules[name].dir})
     if (hasErr(res)) {
       console.log(bad(`Module ${name} failed to link ${pkg}.`))
@@ -82,7 +85,10 @@ for (let name in modules) {
 }
 */
 
-if (gotErrs > 0) {
-  console.error(bad(`Got ${gotErrs} error${gotErrs > 1 ? 's' : ''}.`))
+if (gotErrs.length > 0) {
+  console.error(bad(`Got ${gotErrs.length} error${gotErrs.length > 1 ? 's' : ''}:`))
+  for (let err of gotErrs) {
+    console.error(red(err))
+  }
   process.exit(1)
 }
