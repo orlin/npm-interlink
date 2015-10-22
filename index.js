@@ -4,9 +4,14 @@ import isThere from 'is-there'
 import jsonfile from 'jsonfile'
 import R from 'ramda'
 import {spawnSync} from 'child_process'
+import chalk from 'chalk'
+
+const red = chalk.red
+const bad = chalk.red.bold
 
 let dirList = []
 let modules = {}
+let gotErrs = 0
 
 if (isThere('.npm-interlink')) {
   console.log('Configuration .npm-interlink found.')
@@ -25,8 +30,9 @@ function keys (something) {
 
 function hasErr (spawned) {
   if (spawned.status !== 0 || spawned.error || spawned.stderr.toString()) {
-    console.error(R.pick(['status', 'error'], spawned))
-    if (spawned.stderr) console.error(spawned.stderr.toString())
+    console.error(red(R.pick(['status', 'error'], spawned)))
+    if (spawned.stderr) console.error(red(spawned.stderr.toString()))
+    gotErrs++
     return true
   } else {
     return false
@@ -47,6 +53,7 @@ for (let dir of dirList) {
       }
     } catch (e) {
       console.error(e)
+      gotErrs++
     }
   } else {
     console.log(`Skipping ${dir} - package.json not found.`)
@@ -72,3 +79,8 @@ for (let name in modules) {
   console.log(`${name}: [${modules[name].links}]`)
 }
 */
+
+if (gotErrs > 0) {
+  console.error(bad(`Got ${gotErrs} error${gotErrs > 1 ? 's' : ''}.`))
+  process.exit(1)
+}
