@@ -19,6 +19,7 @@ let args = yargs
   .usage('$0 [options]')
   .option('h', {alias: ['help', '?'], type: 'boolean', description: 'show this help'})
   .option('i', {alias: 'install', type: 'boolean', description: 'install modules without linking'})
+  .option('o', {alias: 'only', type: 'boolean', description: 'only interlink the already linked'})
   .argv
 
 if (args.h) {
@@ -92,7 +93,7 @@ for (let dir of dirList) {
           failure: `Could not install ${pkg.name}'s dependencies.`,
           success: `Installed ${pkg.name}'s dependencies.`
         })
-      } else {
+      } else if (!args.o) {
         command = dollar(`cd ${dir} && npm link #${pkg.name}`, '')
         perform(['npm', ['link'], {cwd: dir}], {
           failure: `Module ${pkg.name} failed to link itself.`,

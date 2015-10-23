@@ -32,6 +32,7 @@ Clone is really a metaphor here, as `npm-interlink` is agnostic to version contr
 Because `npm-interlink` makes it easy to setup many node projects, potentially saving a lot of time that would be otherwise spent waiting to oversee command results, I added some options that can ask it to do something other than its default behavior.
 
 * `-i` or `--install` will install the `node_modules` for each package and skip linking altogether - keep in mind that `npm link` and thus `npm-interlink` without options will also install, so this is for install only
+* `-o` or `--only` will only interlink modules that are already linked, this is perhaps because one wants partially interlinked modules, also `npm link module` is a very fast command compared to `npm install` or `npm link` (self), thus linking incrementally is a good pattern, perhaps this should be the default...
 
 ### Configure
 
