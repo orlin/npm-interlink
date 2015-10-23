@@ -22,7 +22,8 @@
     "chalk": "^1.1.1",
     "is-there": "^4.1.0",
     "jsonfile": "^2.2.3",
-    "ramda": "^0.18.0"
+    "ramda": "^0.18.0",
+    "yargs": "^3.29.0"
   },
   "devDependencies": {
     "babel-eslint": "^4.1.3",

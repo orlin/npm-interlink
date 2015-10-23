@@ -5,6 +5,7 @@ import jsonfile from 'jsonfile'
 import R from 'ramda'
 import {spawnSync} from 'child_process'
 import chalk from 'chalk'
+import yargs from 'yargs'
 
 const red = chalk.red
 const bad = chalk.red.bold
@@ -13,6 +14,16 @@ let dirList = []
 let modules = {}
 let command = '' // context, everything is run synchronously, one command at a time
 let gotErrs = []
+
+let args = yargs
+  .usage('$0 [options]')
+  .option('h', {alias: ['help', '?'], type: 'boolean', description: 'show this help'})
+  .argv
+
+if (args.h) {
+  console.log(yargs.help())
+  process.exit(0)
+}
 
 if (isThere('.npm-interlink')) {
   console.log('Configuration .npm-interlink found.')
