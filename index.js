@@ -18,9 +18,12 @@ let gotErrs = []
 let args = yargs
   .usage('$0 [options]')
   .option('h', {alias: ['help', '?'], type: 'boolean', description: 'show this help'})
+  .option('i', {alias: 'install', type: 'boolean', description: 'install modules before linking'})
   .argv
 
 if (args.h) {
+  console.log('Can install, link and interlink a bunch of node modules.')
+  console.log('')
   console.log(yargs.help())
   process.exit(0)
 }
@@ -60,13 +63,25 @@ for (let dir of dirList) {
   if (isThere(path.join(dir, 'package.json'))) {
     try {
       let pkg = jsonfile.readFileSync(path.join(dir, 'package.json'))
+      let res = {} // set to whatever spawnSync returns
       modules[pkg.name] = {}
       modules[pkg.name].dir = dir
       modules[pkg.name].links = R.union(keys(pkg.dependencies), keys(pkg.devDependencies))
-      command = `\$ cd ${dir} && npm link #${pkg.name}`
+      if (args.i) {
+        console.log('')
+        command = `\$ cd ${dir} && npm install`
+        console.log(command)
+        res = spawnSync('npm', ['install'], {cwd: dir})
+        if (!hasErr(res)) {
+          console.log(`Installed ${pkg.name}'s dependencies.`)
+        } else {
+          console.log(bad(`Could not install ${pkg.name}'s dependencies.`))
+        }
+      }
       console.log('')
+      command = `\$ cd ${dir} && npm link #${pkg.name}`
       console.log(command)
-      let res = spawnSync('npm', ['link'], {cwd: dir})
+      res = spawnSync('npm', ['link'], {cwd: dir})
       if (!hasErr(res)) {
         console.log(`Linked ${pkg.name}.`)
       } else {
