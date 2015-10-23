@@ -43,9 +43,14 @@ function keys (something) {
   return R.keys(something) || []
 }
 
+function clog (something) {
+  // short for conditional log
+  if (something !== undefined) console.log(something)
+}
+
 function dollar (command, prelog) {
   let it = `\$ ${command}`
-  if (prelog !== undefined) console.log(prelog)
+  clog(prelog)
   console.log(it)
   return it
 }
@@ -66,6 +71,14 @@ function hasErr (spawned) {
   return false
 }
 
+function perform (spawnArgs, handle = {}) {
+  if (hasErr(spawnSync.apply(null, spawnArgs))) {
+    clog(bad(handle.failure))
+  } else {
+    clog(handle.success)
+  }
+}
+
 for (let dir of dirList) {
   if (isThere(path.join(dir, 'package.json'))) {
     try {
@@ -75,19 +88,16 @@ for (let dir of dirList) {
       modules[pkg.name].links = R.union(keys(pkg.dependencies), keys(pkg.devDependencies))
       if (args.i) {
         command = dollar(`cd ${dir} && npm install`, '')
-        if (!hasErr(spawnSync('npm', ['install'], {cwd: dir}))) {
-          console.log(`Installed ${pkg.name}'s dependencies.`)
-        } else {
-          console.log(bad(`Could not install ${pkg.name}'s dependencies.`))
-        }
-      }
-      if (!args.i) {
+        perform(['npm', ['install'], {cwd: dir}], {
+          failure: `Could not install ${pkg.name}'s dependencies.`,
+          success: `Installed ${pkg.name}'s dependencies.`
+        })
+      } else {
         command = dollar(`cd ${dir} && npm link #${pkg.name}`, '')
-        if (!hasErr(spawnSync('npm', ['link'], {cwd: dir}))) {
-          console.log(`Linked ${pkg.name}.`)
-        } else {
-          console.log(bad(`Module ${pkg.name} failed to link itself.`))
-        }
+        perform(['npm', ['link'], {cwd: dir}], {
+          failure: `Module ${pkg.name} failed to link itself.`,
+          success: `Linked ${pkg.name}.`
+        })
       }
     } catch (e) {
       console.error(red(e))
@@ -106,9 +116,9 @@ if (!args.i) {
     console.log(`Linking ${name} modules: [${modules[name].links}]...`)
     for (let pkg of modules[name].links) {
       command = dollar(`cd ${modules[name].dir} && npm link ${pkg}`)
-      if (hasErr(spawnSync('npm', ['link', pkg], {cwd: modules[name].dir}))) {
-        console.log(bad(`Module ${name} failed to link ${pkg}.`))
-      }
+      perform(['npm', ['link', pkg], {cwd: modules[name].dir}], {
+        failure: `Module ${name} failed to link ${pkg}.`
+      })
     }
   }
 }
