@@ -10,7 +10,7 @@ Especially useful in the context of `nvm` and / or having many projects that dep
 ## Why
 
 1. quickly setup a bunch of modules for local development or experimentation (install or link)
-2. link a bunch of modules among themselves, without having to remember which depends on which
+2. link a bunch of modules among themselves, without having to remember the interdependencies
 3. relink the same modules in another context, e.g. because `nvm` links modules per node version
 
 ## How
