@@ -18,7 +18,7 @@ let gotErrs = []
 let args = yargs
   .usage('$0 [options]')
   .option('h', {alias: ['help', '?'], type: 'boolean', description: 'show this help'})
-  .option('i', {alias: 'install', type: 'boolean', description: 'install modules before linking'})
+  .option('i', {alias: 'install', type: 'boolean', description: 'install modules without linking'})
   .argv
 
 if (args.h) {
@@ -78,14 +78,16 @@ for (let dir of dirList) {
           console.log(bad(`Could not install ${pkg.name}'s dependencies.`))
         }
       }
-      console.log('')
-      command = `\$ cd ${dir} && npm link #${pkg.name}`
-      console.log(command)
-      res = spawnSync('npm', ['link'], {cwd: dir})
-      if (!hasErr(res)) {
-        console.log(`Linked ${pkg.name}.`)
-      } else {
-        console.log(bad(`Module ${pkg.name} failed to link itself.`))
+      if (!args.i) {
+        console.log('')
+        command = `\$ cd ${dir} && npm link #${pkg.name}`
+        console.log(command)
+        res = spawnSync('npm', ['link'], {cwd: dir})
+        if (!hasErr(res)) {
+          console.log(`Linked ${pkg.name}.`)
+        } else {
+          console.log(bad(`Module ${pkg.name} failed to link itself.`))
+        }
       }
     } catch (e) {
       console.error(red(e))
@@ -96,17 +98,19 @@ for (let dir of dirList) {
   }
 }
 
-for (let name in modules) {
-  let names = R.keys(modules)
-  modules[name].links = R.intersection(modules[name].links, names)
-  console.log('')
-  console.log(`Linking ${name} modules: [${modules[name].links}]...`)
-  for (let pkg of modules[name].links) {
-    command = `\$ cd ${modules[name].dir} && npm link ${pkg}`
-    console.log(command)
-    let res = spawnSync('npm', ['link', pkg], {cwd: modules[name].dir})
-    if (hasErr(res)) {
-      console.log(bad(`Module ${name} failed to link ${pkg}.`))
+if (!args.i) {
+  for (let name in modules) {
+    let names = R.keys(modules)
+    modules[name].links = R.intersection(modules[name].links, names)
+    console.log('')
+    console.log(`Linking ${name} modules: [${modules[name].links}]...`)
+    for (let pkg of modules[name].links) {
+      command = `\$ cd ${modules[name].dir} && npm link ${pkg}`
+      console.log(command)
+      let res = spawnSync('npm', ['link', pkg], {cwd: modules[name].dir})
+      if (hasErr(res)) {
+        console.log(bad(`Module ${name} failed to link ${pkg}.`))
+      }
     }
   }
 }

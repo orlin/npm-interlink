@@ -9,8 +9,9 @@ Especially useful in the context of `nvm` and / or having many projects that dep
 
 ## Why
 
-1. quickly setup a bunch of modules for local development or experimentation
-2. relink the same modules in another context, e.g. because `nvm` links modules per node version
+1. quickly setup a bunch of modules for local development or experimentation (install or link)
+2. link a bunch of modules among themselves, without having to remember which depends on which
+3. relink the same modules in another context, e.g. because `nvm` links modules per node version
 
 ## How
 
@@ -21,10 +22,16 @@ Already linked modules that are not explicitly part of an *interlink* set will n
 
 ## Use
 
-[![NPM](https://nodei.co/npm/npm-interlink.png?mini=true)](https://www.npmjs.org/package/npm-interlink)
+[![NPM](https://nodei.co/npm/npm-interlink.png?compact=true)](https://www.npmjs.org/package/npm-interlink)
 
 Clone some node.js projects and run `npm-interlink` in their parent directory.
 Clone is really a metaphor here, as `npm-interlink` is agnostic to version control.
+
+### Options
+
+Because `npm-interlink` makes it easy to setup many node projects, potentially saving a lot of time that would be otherwise spent waiting to oversee command results, I added some options that can ask it to do something other than its default behavior.
+
+* `-i` or `--install` will install the `node_modules` for each package and skip linking altogether - keep in mind that `npm link` and thus `npm-interlink` without options will also install, so this is for install only
 
 ### Configure
 
