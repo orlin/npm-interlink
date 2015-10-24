@@ -3,16 +3,32 @@ import path from 'path'
 import isThere from 'is-there'
 import jsonfile from 'jsonfile'
 import R from 'ramda'
-import {spawnSync} from 'child_process'
+import {spawnSync, execSync} from 'child_process'
 import chalk from 'chalk'
+import yargs from 'yargs'
 
 const red = chalk.red
 const bad = chalk.red.bold
 
 let dirList = []
 let modules = {}
+let candidates = execSync('npm ls --global --depth 0').toString() // already linked?
 let command = '' // context, everything is run synchronously, one command at a time
 let gotErrs = []
+
+let args = yargs
+  .usage('$0 [options]')
+  .option('h', {alias: ['help', '?'], type: 'boolean', description: 'show this help'})
+  .option('i', {alias: 'install', type: 'boolean', description: 'install modules without linking'})
+  .option('o', {alias: 'only', type: 'boolean', description: 'only interlink the already linked'})
+  .argv
+
+if (args.h) {
+  console.log('Can install, link and interlink a bunch of node modules.')
+  console.log('')
+  console.log(yargs.help())
+  process.exit(0)
+}
 
 if (isThere('.npm-interlink')) {
   console.log('Configuration .npm-interlink found.')
@@ -27,6 +43,18 @@ if (isThere('.npm-interlink')) {
 
 function keys (something) {
   return R.keys(something) || []
+}
+
+function clog (something) {
+  // short for conditional log
+  if (something !== undefined) console.log(something)
+}
+
+function dollar (command, prelog) {
+  let it = `\$ ${command}`
+  clog(prelog)
+  console.log(it)
+  return it
 }
 
 function hasErr (spawned) {
@@ -45,21 +73,47 @@ function hasErr (spawned) {
   return false
 }
 
+function perform (spawnArgs, handle = {}) {
+  let success = !hasErr(spawnSync.apply(null, spawnArgs))
+  if (success) {
+    clog(handle.success)
+  } else {
+    clog(bad(handle.failure))
+  }
+  if (handle.callback) {
+    handle.callback(success)
+  }
+}
+
 for (let dir of dirList) {
   if (isThere(path.join(dir, 'package.json'))) {
     try {
       let pkg = jsonfile.readFileSync(path.join(dir, 'package.json'))
       modules[pkg.name] = {}
       modules[pkg.name].dir = dir
+      modules[pkg.name].path = path.resolve(dir)
+      modules[pkg.name].linked = false
+      if ((new RegExp(`${modules[pkg.name].path}\s*\r?\n`)).test(candidates)) {
+        modules[pkg.name].linked = true
+      }
       modules[pkg.name].links = R.union(keys(pkg.dependencies), keys(pkg.devDependencies))
-      command = `\$ cd ${dir} && npm link #${pkg.name}`
-      console.log('')
-      console.log(command)
-      let res = spawnSync('npm', ['link'], {cwd: dir})
-      if (!hasErr(res)) {
-        console.log(`Linked ${pkg.name}.`)
-      } else {
-        console.log(bad(`Module ${pkg.name} failed to link itself.`))
+      if (args.i) {
+        command = dollar(`cd ${dir} && npm install`, '')
+        perform(['npm', ['install'], {cwd: dir}], {
+          failure: `Could not install ${pkg.name}'s dependencies.`,
+          success: `Installed ${pkg.name}'s dependencies.`
+        })
+      } else if (!args.o) {
+        if (!modules[pkg.name].linked) {
+          command = dollar(`cd ${dir} && npm link #${pkg.name}`, '')
+          perform(['npm', ['link'], {cwd: dir}], {
+            failure: `Module ${pkg.name} failed to link itself.`,
+            success: `Linked ${pkg.name}.`,
+            callback: (success) => { if (success) modules[pkg.name].linked = true }
+          })
+        } else {
+          console.log(`Module ${pkg.name} is already linked.`)
+        }
       }
     } catch (e) {
       console.error(red(e))
@@ -70,17 +124,21 @@ for (let dir of dirList) {
   }
 }
 
-for (let name in modules) {
-  let names = R.keys(modules)
-  modules[name].links = R.intersection(modules[name].links, names)
-  console.log('')
-  console.log(`Linking ${name} modules: [${modules[name].links}]...`)
-  for (let pkg of modules[name].links) {
-    command = `\$ cd ${modules[name].dir} && npm link ${pkg}`
-    console.log(command)
-    let res = spawnSync('npm', ['link', pkg], {cwd: modules[name].dir})
-    if (hasErr(res)) {
-      console.log(bad(`Module ${name} failed to link ${pkg}.`))
+if (!args.i) {
+  for (let name in modules) {
+    let names = R.keys(modules)
+    modules[name].links = R.intersection(modules[name].links, names)
+    console.log('')
+    console.log(`Linking ${name} modules: [${modules[name].links}]...`)
+    for (let pkg of modules[name].links) {
+      if (modules[pkg].linked) {
+        command = dollar(`cd ${modules[name].dir} && npm link ${pkg}`)
+        perform(['npm', ['link', pkg], {cwd: modules[name].dir}], {
+          failure: `Module ${name} failed to link ${pkg}.`
+        })
+      } else {
+        console.log(red(`Module ${pkg} isn't linked, thus not linking to it.`))
+      }
     }
   }
 }
