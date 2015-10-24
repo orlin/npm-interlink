@@ -74,10 +74,14 @@ function hasErr (spawned) {
 }
 
 function perform (spawnArgs, handle = {}) {
-  if (hasErr(spawnSync.apply(null, spawnArgs))) {
-    clog(bad(handle.failure))
-  } else {
+  let success = !hasErr(spawnSync.apply(null, spawnArgs))
+  if (success) {
     clog(handle.success)
+  } else {
+    clog(bad(handle.failure))
+  }
+  if (handle.callback) {
+    handle.callback(success)
   }
 }
 
@@ -87,8 +91,9 @@ for (let dir of dirList) {
       let pkg = jsonfile.readFileSync(path.join(dir, 'package.json'))
       modules[pkg.name] = {}
       modules[pkg.name].dir = dir
+      modules[pkg.name].path = path.resolve(dir)
       modules[pkg.name].linked = false
-      if ((new RegExp(`${path.resolve(modules[pkg.name].dir)}\s*\r?\n`)).test(candidates)) {
+      if ((new RegExp(`${modules[pkg.name].path}\s*\r?\n`)).test(candidates)) {
         modules[pkg.name].linked = true
       }
       modules[pkg.name].links = R.union(keys(pkg.dependencies), keys(pkg.devDependencies))
@@ -99,11 +104,16 @@ for (let dir of dirList) {
           success: `Installed ${pkg.name}'s dependencies.`
         })
       } else if (!args.o) {
-        command = dollar(`cd ${dir} && npm link #${pkg.name}`, '')
-        perform(['npm', ['link'], {cwd: dir}], {
-          failure: `Module ${pkg.name} failed to link itself.`,
-          success: `Linked ${pkg.name}.`
-        })
+        if (!modules[pkg.name].linked) {
+          command = dollar(`cd ${dir} && npm link #${pkg.name}`, '')
+          perform(['npm', ['link'], {cwd: dir}], {
+            failure: `Module ${pkg.name} failed to link itself.`,
+            success: `Linked ${pkg.name}.`,
+            callback: (success) => { if (success) modules[pkg.name].linked = true }
+          })
+        } else {
+          console.log(`Module ${pkg.name} is already linked.`)
+        }
       }
     } catch (e) {
       console.error(red(e))
