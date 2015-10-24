@@ -3,7 +3,7 @@ import path from 'path'
 import isThere from 'is-there'
 import jsonfile from 'jsonfile'
 import R from 'ramda'
-import {spawnSync} from 'child_process'
+import {spawnSync, execSync} from 'child_process'
 import chalk from 'chalk'
 import yargs from 'yargs'
 
@@ -12,6 +12,7 @@ const bad = chalk.red.bold
 
 let dirList = []
 let modules = {}
+let candidates = execSync('npm ls --global --depth 0').toString() // already linked?
 let command = '' // context, everything is run synchronously, one command at a time
 let gotErrs = []
 
@@ -86,6 +87,10 @@ for (let dir of dirList) {
       let pkg = jsonfile.readFileSync(path.join(dir, 'package.json'))
       modules[pkg.name] = {}
       modules[pkg.name].dir = dir
+      modules[pkg.name].linked = false
+      if ((new RegExp(`${path.resolve(modules[pkg.name].dir)}\s*\r?\n`)).test(candidates)) {
+        modules[pkg.name].linked = true
+      }
       modules[pkg.name].links = R.union(keys(pkg.dependencies), keys(pkg.devDependencies))
       if (args.i) {
         command = dollar(`cd ${dir} && npm install`, '')
@@ -116,10 +121,14 @@ if (!args.i) {
     console.log('')
     console.log(`Linking ${name} modules: [${modules[name].links}]...`)
     for (let pkg of modules[name].links) {
-      command = dollar(`cd ${modules[name].dir} && npm link ${pkg}`)
-      perform(['npm', ['link', pkg], {cwd: modules[name].dir}], {
-        failure: `Module ${name} failed to link ${pkg}.`
-      })
+      if (modules[pkg].linked) {
+        command = dollar(`cd ${modules[name].dir} && npm link ${pkg}`)
+        perform(['npm', ['link', pkg], {cwd: modules[name].dir}], {
+          failure: `Module ${name} failed to link ${pkg}.`
+        })
+      } else {
+        console.log(red(`Module ${pkg} isn't linked, thus not linking to it.`))
+      }
     }
   }
 }
