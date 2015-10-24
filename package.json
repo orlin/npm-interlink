@@ -4,7 +4,16 @@
   "keywords": [
     "npm",
     "link",
-    "tool"
+    "tool",
+    "dependencies",
+    "devDependencies",
+    "development",
+    "workflow",
+    "cli",
+    "nvm",
+    "node",
+    "version",
+    "install"
   ],
   "version": "0.2.0",
   "repository": {

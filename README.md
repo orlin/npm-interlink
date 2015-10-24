@@ -28,6 +28,8 @@ Already linked modules that are not explicitly part of an *interlink* set will n
 Clone some node.js projects and run `npm-interlink` in their parent directory.
 Clone is really a metaphor here, as `npm-interlink` is agnostic to version control.
 
+$ `npm-interlink -?`
+
 ### Options
 
 Because `npm-interlink` makes it easy to setup many node projects, potentially saving a lot of time that would be otherwise spent waiting to oversee command results, I added some options that can ask it to do something other than its default behavior.
