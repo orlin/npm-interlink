@@ -30,6 +30,7 @@ if (args.h) {
   process.exit(0)
 }
 
+// configured directories, or the current sub-directories (of the .)
 if (isThere('.npm-interlink')) {
   console.log('Configuration .npm-interlink found.')
   dirList = fs.readFileSync('.npm-interlink').toString().split('\n').filter(item => {
@@ -50,6 +51,7 @@ function clog (something) {
   if (something !== undefined) console.log(something)
 }
 
+// prelog is logged first if exists
 function dollar (command, prelog) {
   let it = `\$ ${command}`
   clog(prelog)

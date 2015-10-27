@@ -12,7 +12,7 @@ Especially useful in the context of `nvm` and / or having many projects that dep
 1. quickly setup a bunch of modules for local development or experimentation (install or link)
 2. link a bunch of modules among themselves, without having to remember the interdependencies
 3. relink the same modules in another context, e.g. because `nvm` links modules per node version
-4. easily link the modules incrementally, just rerun it and new modules get linked, linked to
+4. easily link the modules incrementally, just rerun it and new modules get linked / interlinked
 
 ## How
 
