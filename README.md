@@ -47,6 +47,7 @@ For example, here is how I interlink the [gulpsome beverage](https://github.com/
 ```text
 be-goods
 beverage
+beverage-cli
 ../childish-process
 gulp-cause
 gulp-harp
@@ -54,6 +55,7 @@ gulp-npm-run
 gulp-npm-test
 hal-rc
 ../sourcegate
+../es2015-mod # is babel-preset-es2015-mod renamed
 ```
 
 How you setup the directory structure is entirely up to you, though this obviously works well for organizations (collections of repos).  One can start with a subset and add more projects as the need to work on them arises.
